@@ -1,8 +1,11 @@
 import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export const Closet = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-cream">
       <header className="bg-white shadow-sm p-4">
@@ -27,13 +30,25 @@ export const Closet = () => {
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4">
         <div className="flex justify-around">
-          <Button variant="ghost" className="text-charcoal-light">
+          <Button 
+            variant="ghost" 
+            className="text-charcoal-light"
+            onClick={() => navigate('/')}
+          >
             Closet
           </Button>
-          <Button variant="ghost" className="text-charcoal-light">
+          <Button 
+            variant="ghost" 
+            className="text-charcoal-light"
+            onClick={() => navigate('/outfits')}
+          >
             Outfits
           </Button>
-          <Button variant="ghost" className="text-charcoal-light">
+          <Button 
+            variant="ghost" 
+            className="text-charcoal-light"
+            onClick={() => navigate('/profile')}
+          >
             Profile
           </Button>
         </div>
