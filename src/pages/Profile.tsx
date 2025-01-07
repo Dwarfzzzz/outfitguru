@@ -4,11 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 
 const Profile = () => {
   const [name, setName] = useState("Jane Doe");
   const [bio, setBio] = useState("Fashion enthusiast and minimalist dresser.");
+  const { toast } = useToast();
+
+  const handleSave = () => {
+    // Here you would typically make an API call to save the changes
+    // For now, we'll just show a success toast
+    toast({
+      title: "Profile Updated",
+      description: "Your changes have been saved successfully.",
+    });
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl animate-fadeIn">
@@ -49,7 +60,10 @@ const Profile = () => {
               />
             </div>
 
-            <Button className="w-full bg-primary hover:bg-primary-dark text-white">
+            <Button 
+              className="w-full bg-primary hover:bg-primary-dark text-white"
+              onClick={handleSave}
+            >
               Save Changes
             </Button>
           </div>
