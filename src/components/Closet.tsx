@@ -1,7 +1,8 @@
-import { Plus } from "lucide-react";
+import { Grid, Heart, Sun, Settings } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { DashboardStats } from "./DashboardStats";
 
 export const Closet = () => {
   const navigate = useNavigate();
@@ -9,14 +10,16 @@ export const Closet = () => {
   return (
     <div className="min-h-screen bg-cream">
       <header className="bg-white shadow-sm p-4">
-        <h1 className="text-2xl font-semibold text-charcoal text-center">My Closet</h1>
+        <h1 className="text-2xl font-semibold text-charcoal text-center">Outfitguru</h1>
       </header>
 
       <main className="p-4">
+        <DashboardStats />
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-2 gap-4"
+          className="grid grid-cols-2 gap-4 mt-6"
         >
           <Button
             variant="outline"
@@ -32,24 +35,35 @@ export const Closet = () => {
         <div className="flex justify-around">
           <Button 
             variant="ghost" 
-            className="text-charcoal-light"
+            className="text-charcoal-light flex flex-col items-center"
             onClick={() => navigate('/')}
           >
-            Closet
+            <Grid className="h-5 w-5 mb-1" />
+            <span className="text-xs">Kledingkast</span>
           </Button>
           <Button 
             variant="ghost" 
-            className="text-charcoal-light"
+            className="text-charcoal-light flex flex-col items-center"
             onClick={() => navigate('/outfits')}
           >
-            Outfits
+            <Heart className="h-5 w-5 mb-1" />
+            <span className="text-xs">Outfits</span>
           </Button>
           <Button 
             variant="ghost" 
-            className="text-charcoal-light"
+            className="text-charcoal-light flex flex-col items-center"
+            onClick={() => navigate('/weather')}
+          >
+            <Sun className="h-5 w-5 mb-1" />
+            <span className="text-xs">Weer</span>
+          </Button>
+          <Button 
+            variant="ghost" 
+            className="text-charcoal-light flex flex-col items-center"
             onClick={() => navigate('/profile')}
           >
-            Profile
+            <Settings className="h-5 w-5 mb-1" />
+            <span className="text-xs">Instellingen</span>
           </Button>
         </div>
       </nav>
