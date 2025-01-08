@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { DashboardStats } from "./DashboardStats";
+import { ClothingGrid } from "./ClothingGrid";
 
 export const Closet = () => {
   const navigate = useNavigate();
@@ -19,15 +20,20 @@ export const Closet = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-2 gap-4 mt-6"
+          className="mt-6"
         >
-          <Button
-            variant="outline"
-            className="h-40 flex flex-col items-center justify-center space-y-2 border-2 border-dashed border-secondary rounded-lg hover:border-primary hover:bg-primary/5"
-          >
-            <Plus className="w-8 h-8 text-primary" />
-            <span className="text-sm text-charcoal-light">Add Item</span>
-          </Button>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-charcoal">Mijn Kledingkast</h2>
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 border-2 border-dashed border-secondary hover:border-primary hover:bg-primary/5"
+            >
+              <Plus className="w-5 h-5 text-primary" />
+              <span className="text-sm text-charcoal-light">Item Toevoegen</span>
+            </Button>
+          </div>
+          
+          <ClothingGrid />
         </motion.div>
       </main>
 
