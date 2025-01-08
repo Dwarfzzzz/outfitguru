@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Tshirt, Heart, Sun } from "lucide-react";
+import { Shirt, Heart, Sun } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const DashboardStats = () => {
@@ -19,7 +19,7 @@ export const DashboardStats = () => {
       >
         <Card>
           <CardContent className="flex items-center p-6">
-            <Tshirt className="h-8 w-8 text-primary mr-4" />
+            <Shirt className="h-8 w-8 text-primary mr-4" />
             <div>
               <p className="text-sm text-charcoal-light">Totaal Items</p>
               <p className="text-2xl font-semibold text-charcoal">{stats.totalItems}</p>
