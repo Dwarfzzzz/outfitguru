@@ -67,6 +67,21 @@ export const SocialFeed = () => {
     },
   });
 
+  const { data: following = [], refetch: refetchFollowing } = useQuery({
+    queryKey: ["following", currentUserId],
+    queryFn: async () => {
+      if (!currentUserId) return [];
+      const { data, error } = await supabase
+        .from("followers")
+        .select("following_id")
+        .eq("follower_id", currentUserId);
+
+      if (error) throw error;
+      return data.map(f => f.following_id);
+    },
+    enabled: !!currentUserId,
+  });
+
   const handleLike = async (postId: string) => {
     if (!currentUserId) return;
 
@@ -88,15 +103,15 @@ export const SocialFeed = () => {
 
         if (deleteError) {
           toast({
-            title: "Error",
-            description: "Could not unlike the post",
+            title: "Fout",
+            description: "Kon de like niet verwijderen",
             variant: "destructive",
           });
         }
       } else {
         toast({
-          title: "Error",
-          description: "Could not like the post",
+          title: "Fout",
+          description: "Kon niet liken",
           variant: "destructive",
         });
       }
@@ -115,8 +130,8 @@ export const SocialFeed = () => {
 
     if (error) {
       toast({
-        title: "Error",
-        description: "Could not post comment",
+        title: "Fout",
+        description: "Kon reactie niet plaatsen",
         variant: "destructive",
       });
     } else {
@@ -126,7 +141,7 @@ export const SocialFeed = () => {
   };
 
   const handleFollow = async (userId: string) => {
-    if (!currentUserId) return;
+    if (!currentUserId || userId === currentUserId) return;
 
     const { error } = await supabase.from("followers").insert({
       follower_id: currentUserId,
@@ -146,20 +161,30 @@ export const SocialFeed = () => {
 
         if (deleteError) {
           toast({
-            title: "Error",
-            description: "Could not unfollow user",
+            title: "Fout",
+            description: "Kon niet ontvolgen",
             variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Succes",
+            description: "Je volgt deze gebruiker niet meer",
           });
         }
       } else {
         toast({
-          title: "Error",
-          description: "Could not follow user",
+          title: "Fout",
+          description: "Kon gebruiker niet volgen",
           variant: "destructive",
         });
       }
+    } else {
+      toast({
+        title: "Succes",
+        description: "Je volgt nu deze gebruiker",
+      });
     }
-    refetch();
+    refetchFollowing();
   };
 
   return (
@@ -177,17 +202,19 @@ export const SocialFeed = () => {
                 {new Date(post.created_at).toLocaleDateString()}
               </p>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => handleFollow(post.user_id)}
-            >
-              {post.user_id === currentUserId ? (
-                <UserMinus className="h-5 w-5" />
-              ) : (
-                <UserPlus className="h-5 w-5" />
-              )}
-            </Button>
+            {currentUserId !== post.user_id && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleFollow(post.user_id)}
+              >
+                {following.includes(post.user_id) ? (
+                  <UserMinus className="h-5 w-5" />
+                ) : (
+                  <UserPlus className="h-5 w-5" />
+                )}
+              </Button>
+            )}
           </CardHeader>
           <CardContent className="space-y-4">
             <img
@@ -210,9 +237,7 @@ export const SocialFeed = () => {
               >
                 <Heart
                   className={`h-5 w-5 ${
-                    post.likes.some(
-                      (like) => like.user_id === currentUserId
-                    )
+                    post.likes.some((like) => like.user_id === currentUserId)
                       ? "fill-red-500 text-red-500"
                       : ""
                   }`}
@@ -232,11 +257,11 @@ export const SocialFeed = () => {
               <div className="w-full space-y-4">
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Add a comment..."
+                    placeholder="Voeg een reactie toe..."
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                   />
-                  <Button onClick={() => handleComment(post.id)}>Post</Button>
+                  <Button onClick={() => handleComment(post.id)}>Plaats</Button>
                 </div>
                 <div className="space-y-2">
                   {post.comments.map((comment) => (
