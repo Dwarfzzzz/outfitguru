@@ -33,7 +33,16 @@ interface Post {
 export const SocialFeed = () => {
   const [newComment, setNewComment] = useState("");
   const [activePostId, setActivePostId] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    getCurrentUser();
+  }, []);
 
   const { data: posts, refetch } = useQuery({
     queryKey: ["posts"],
@@ -59,9 +68,11 @@ export const SocialFeed = () => {
   });
 
   const handleLike = async (postId: string) => {
+    if (!currentUserId) return;
+
     const { error } = await supabase.from("likes").insert({
       post_id: postId,
-      user_id: (await supabase.auth.getUser()).data.user?.id,
+      user_id: currentUserId,
     });
 
     if (error) {
@@ -72,7 +83,7 @@ export const SocialFeed = () => {
           .delete()
           .match({ 
             post_id: postId, 
-            user_id: (await supabase.auth.getUser()).data.user?.id 
+            user_id: currentUserId 
           });
 
         if (deleteError) {
@@ -94,12 +105,12 @@ export const SocialFeed = () => {
   };
 
   const handleComment = async (postId: string) => {
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || !currentUserId) return;
 
     const { error } = await supabase.from("comments").insert({
       post_id: postId,
       content: newComment,
-      user_id: (await supabase.auth.getUser()).data.user?.id,
+      user_id: currentUserId,
     });
 
     if (error) {
@@ -115,8 +126,10 @@ export const SocialFeed = () => {
   };
 
   const handleFollow = async (userId: string) => {
+    if (!currentUserId) return;
+
     const { error } = await supabase.from("followers").insert({
-      follower_id: (await supabase.auth.getUser()).data.user?.id,
+      follower_id: currentUserId,
       following_id: userId,
     });
 
@@ -127,7 +140,7 @@ export const SocialFeed = () => {
           .from("followers")
           .delete()
           .match({
-            follower_id: (await supabase.auth.getUser()).data.user?.id,
+            follower_id: currentUserId,
             following_id: userId,
           });
 
@@ -169,7 +182,7 @@ export const SocialFeed = () => {
               size="icon"
               onClick={() => handleFollow(post.user_id)}
             >
-              {post.user_id === (supabase.auth.getUser()).data.user?.id ? (
+              {post.user_id === currentUserId ? (
                 <UserMinus className="h-5 w-5" />
               ) : (
                 <UserPlus className="h-5 w-5" />
@@ -198,8 +211,7 @@ export const SocialFeed = () => {
                 <Heart
                   className={`h-5 w-5 ${
                     post.likes.some(
-                      (like) =>
-                        like.user_id === (supabase.auth.getUser()).data.user?.id
+                      (like) => like.user_id === currentUserId
                     )
                       ? "fill-red-500 text-red-500"
                       : ""
